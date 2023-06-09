@@ -16,5 +16,6 @@ This application should be able to filter and sort these plans according to some
 
 ## Improvments for the future
 - [x] Fulfill all the bussiness logic requirements.
+- [ ] Full test coverage.
 - [ ] A Frontend application (probably using [Vecty](https://github.com/hexops/vecty) framework.
 - [ ] Adjust the project structure following the [Package By Feature](https://phauer.com/2020/package-by-feature/) pattern.
