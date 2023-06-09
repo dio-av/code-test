@@ -7,56 +7,26 @@ import (
 	"time"
 )
 
-type PlanData struct {
-	Device struct {
-		Name string `json:"name"`
-	} `json:"device"`
-	Plans []struct {
-		ID               int     `json:"id"`
-		Type             string  `json:"type"`
-		Name             string  `json:"name"`
-		PhonePrice       int     `json:"phonePrice"`
-		PhonePriceOnPlan int     `json:"phonePriceOnPlan"`
-		Installments     int     `json:"installments"`
-		MonthlyFee       float32 `json:"monthlyFee"`
-		Schedule         struct {
-			StartDate time.Time `json:"startDate"`
-		} `json:"schedule"`
-		Region struct {
-			Name     string `json:"name"`
-			Priority int    `json:"priority"`
-		} `json:"region"`
-	} `json:"plans"`
-}
-
 func (p *PlanData) GetJson(path string) (*PlanData, error) {
 	file, err := os.ReadFile(path)
 	if err != nil {
 		err := fmt.Errorf("error openning data json file. %w", err)
-		return nil, err
+		return &PlanData{}, err
 	}
 
 	var response PlanData
 	err = json.Unmarshal(file, &response)
 	if err != nil {
 		err := fmt.Errorf("error unmarshalling json from file. %w", err)
-		return nil, err
+		return &PlanData{}, err
 	}
 	return &response, nil
 }
 
-// FIX: each plan must have it´s particular priority
-func (p *PlanData) Priority() map[string]int {
-	l := p.Plans[0].Region.Priority
-	t := make(map[string]int)
-	for _, d := range p.Plans {
-		if l > d.Region.Priority {
-			t[d.Name] = d.Region.Priority
-		} else {
-			t[d.Name] = l
-		}
-	}
-	return t
+// FIXME: Return a single PlanData object with high priority
+func (p *PlanData) PriorityFilter() PlanData {
+	filteredData := removeLowPriority(*p)
+	return filteredData
 }
 
 func (p *PlanData) AdjustPlanDate() {
@@ -64,4 +34,80 @@ func (p *PlanData) AdjustPlanDate() {
 		d.Schedule.StartDate = time.Now().Add(time.Hour * 24 * 30)
 		p.Plans[i].Schedule.StartDate = d.Schedule.StartDate
 	}
+}
+
+/* func removeLowPriority(p PlanData) PlanData {
+	var aux PlanData
+	filter := p
+	aux.Device = filter.Device
+
+	j := 1
+	for _, v := range p.Plans {
+		if v.Name == filter.Plans[j].Name {
+			if v.Region.Priority > filter.Plans[j].Region.Priority {
+				aux.Plans = append(aux.Plans, filter.Plans[j])
+			} else {
+				aux.Plans = append(aux.Plans, v)
+			}
+		} else {
+			aux.Plans = append(aux.Plans, filter.Plans[j])
+		}
+		j++
+		if j > (len(p.Plans) - 1) {
+			break
+		}
+	}
+	k := 1
+	for i, v := range aux.Plans {
+		if v.Name == aux.Plans[k].Name {
+			if v.Region.Priority < filter.Plans[k].Region.Priority {
+				aux.Plans = append(aux.Plans[:i], aux.Plans[i+1:]...)
+			}
+		}
+	}
+
+	return aux
+} */
+
+func removeLowPriority(p PlanData) PlanData {
+	var aux PlanData
+	filter := p
+	aux.Device = filter.Device
+
+	for i := 0; i <= len(filter.Plans)-1; i++ {
+		curr := filter.Plans[i]
+		for j := i + 1; j <= len(filter.Plans)-1; j++ {
+			next := filter.Plans[j]
+			if curr.Name == next.Name {
+				if curr.Region.Priority > next.Region.Priority {
+					aux.Plans = append(aux.Plans, next)
+				} else if curr.Region.Priority < next.Region.Priority {
+					aux.Plans = append(aux.Plans, curr)
+				} else {
+					j++
+				}
+			} else {
+				i = j
+				break
+			}
+
+		}
+	}
+	aux = removeDupes(aux)
+	return aux
+}
+
+func removeDupes(p PlanData) PlanData {
+	aux := p
+	j := 1
+	for i := 0; i <= len(p.Plans)-1; i++ {
+		if p.Plans[i].Name == p.Plans[j].Name {
+			aux.Plans = append(aux.Plans[:i], aux.Plans[i+1:]...)
+		}
+		j++
+		if j <= len(p.Plans)-1 {
+			break
+		}
+	}
+	return aux
 }

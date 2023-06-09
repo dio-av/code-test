@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/dio-av/code-test/parser"
@@ -13,7 +14,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	p.AdjustPlanDate()
-	p.Priority()
-	fmt.Printf("Fisrt Data %v", data)
+	data.AdjustPlanDate()
+	priorityList := data.PriorityFilter()
+	//fmt.Printf("Fisrt Data %v\n", data)
+	fmt.Println(priorityList)
+
+	result, _ := json.MarshalIndent(priorityList, "", "  ")
+	send, _ := json.Marshal(priorityList)
+	fmt.Println(string(result))
+	fmt.Println(string(send))
 }

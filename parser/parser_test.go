@@ -8,7 +8,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-func TestParse(t *testing.T) {
+func TestGetJson(t *testing.T) {
 	t.Parallel()
 
 	data, err := os.ReadFile("./testData.json")
