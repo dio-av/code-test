@@ -23,20 +23,3 @@ type PlanData struct {
 		} `json:"region"`
 	} `json:"plans"`
 }
-
-type Plan struct {
-	ID               int
-	Type             string
-	Name             string
-	PhonePrice       int
-	PhonePriceOnPlan int
-	Installments     int
-	MonthlyFee       float32
-	Schedule         struct {
-		StartDate time.Time
-	}
-	Region struct {
-		Name     string
-		Priority int
-	}
-}
