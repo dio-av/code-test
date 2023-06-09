@@ -1,7 +1,7 @@
 # code-test
 Small test code getting a json from a file emulating a front-end response of user request, parsing and giving back the data. 
 
----------------
+
 
 ## Problem to be solved
 
@@ -12,11 +12,9 @@ This application should be able to filter and sort these plans according to some
 3. The plan with the highest priority must be chosen, with 1 being considered the highest priority and (n+1) the lowest priority.
 4. The return list must show all the fields in the plan.
 
----------------
+
 
 ## Improvments for the future
 - [x] Fulfill all the bussiness logic requirements.
 - [ ] A Frontend application (probably using [Vecty](https://github.com/hexops/vecty) framework.
 - [ ] Adjust the project structure following the [Package By Feature](https://phauer.com/2020/package-by-feature/) pattern.
-
----------------
