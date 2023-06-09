@@ -23,7 +23,6 @@ func (p *PlanData) GetJson(path string) (*PlanData, error) {
 	return &response, nil
 }
 
-// FIXME: Return a single PlanData object with high priority
 func (p *PlanData) PriorityFilter() PlanData {
 	filteredData := removeLowPriority(*p)
 	return filteredData
@@ -35,39 +34,6 @@ func (p *PlanData) AdjustPlanDate() {
 		p.Plans[i].Schedule.StartDate = d.Schedule.StartDate
 	}
 }
-
-/* func removeLowPriority(p PlanData) PlanData {
-	var aux PlanData
-	filter := p
-	aux.Device = filter.Device
-
-	j := 1
-	for _, v := range p.Plans {
-		if v.Name == filter.Plans[j].Name {
-			if v.Region.Priority > filter.Plans[j].Region.Priority {
-				aux.Plans = append(aux.Plans, filter.Plans[j])
-			} else {
-				aux.Plans = append(aux.Plans, v)
-			}
-		} else {
-			aux.Plans = append(aux.Plans, filter.Plans[j])
-		}
-		j++
-		if j > (len(p.Plans) - 1) {
-			break
-		}
-	}
-	k := 1
-	for i, v := range aux.Plans {
-		if v.Name == aux.Plans[k].Name {
-			if v.Region.Priority < filter.Plans[k].Region.Priority {
-				aux.Plans = append(aux.Plans[:i], aux.Plans[i+1:]...)
-			}
-		}
-	}
-
-	return aux
-} */
 
 func removeLowPriority(p PlanData) PlanData {
 	var aux PlanData
